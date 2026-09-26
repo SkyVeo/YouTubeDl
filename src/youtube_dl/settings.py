@@ -1,3 +1,36 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:620608445708b840606db1f7bdc67dbe0811b9f14b8bb36381423a35e3265ca5
-size 936
+import json
+from pathlib import Path
+
+from youtube_dl.paths import DEFAULT_VIDEOS_DIR
+
+APP_DATA_DIR = Path.home() / "AppData" / "Local" / "YouTubeDl"
+SETTINGS_FILE = APP_DATA_DIR / "settings.json"
+
+
+def load_download_dir() -> Path:
+    if not SETTINGS_FILE.exists():
+        return DEFAULT_VIDEOS_DIR
+
+    try:
+        with SETTINGS_FILE.open("r", encoding="utf-8") as file:
+            settings = json.load(file)
+
+        path = Path(settings["download_dir"])
+
+        if path.exists() and path.is_dir():
+            return path
+    except (OSError, json.JSONDecodeError, KeyError, TypeError):
+        pass
+
+    return DEFAULT_VIDEOS_DIR
+
+
+def save_download_dir(path: Path) -> None:
+    APP_DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    settings = {
+        "download_dir": str(path),
+    }
+
+    with SETTINGS_FILE.open("w", encoding="utf-8") as file:
+        json.dump(settings, file, indent=4)

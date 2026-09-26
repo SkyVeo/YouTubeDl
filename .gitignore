@@ -1,3 +1,2 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6c62ab887e09ecf0d65ecbeaccb560f11393bf4f4d70489aa010c5aeba137146
-size 150
+__pycache__/
+*.py[cod]
